@@ -1,2 +1,9 @@
- [build] 
- command = "python manage.py collectstatic --noinput"
+[build]
+command = "python manage.py collectstatic --noinput && python manage.py migrate"
+publish = "static"
+
+[functions]
+directory = "netlify/functions"
+
+[functions."serverless_function_name"]
+runtime = "python3.9"
