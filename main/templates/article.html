@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% block content%}
+<main class="container mt-3 mb-5">
+	<!-- Featured news -->
+	<div class="row my-3">
+		<!-- Left -->
+		<div class="col-md-8">
+			<div class="card mb-3">
+				<h5 class="mt-4 card-title text-center fs-3 fw-bolder">{{news.title}}</h5>
+			    <hr class="mb-0"/>
+                 <img src="/media/{{news.image}}" class="card-img mt-0 img-fluid" alt="{{news.title}}">
+			  <div class="card-body">
+				<div>
+					{{ news.article|safe }}
+				</div>
+			  </div>
+			  <div class="card-footer">
+			  	In <a href="/category/{{news.category.id}}">{{news.category.title}}</a>
+			  </div>
+			</div>
+
+			<!-- Comments -->
+			<div class="card my-4">
+				<h6 class="card-header">Add a Comment</h6>
+				<div class="card-body">
+					{% for message in messages %}
+						<p class="text-success">{{ message }}</p>
+					{% endfor %}
+					<form method="post" action="/article/{{ news.id }}">
+						{% csrf_token %}
+
+						<div class="form-group row">
+							<label for="id_name" class="col-md-2 col-form-label">Name <span class="text-danger">*</span></label>
+							<div class="col-md-10">
+								{{ form.name }}
+								{% if form.name.errors %}
+									<div class="text-danger">
+										{% for error in form.name.errors %}
+											<p>{{ error }}</p>
+										{% endfor %}
+									</div>
+								{% endif %}
+							</div>
+						</div>
+
+						<div class="form-group row">
+							<label for="id_email" class="col-md-2 col-form-label">Email <span class="text-danger">*</span></label>
+							<div class="col-md-10">
+								{{ form.email }}
+								{% if form.email.errors %}
+									<div class="text-danger">
+										{% for error in form.email.errors %}
+											<p>{{ error }}</p>
+										{% endfor %}
+									</div>
+								{% endif %}
+							</div>
+						</div>
+
+						<div class="form-group row">
+							<label for="id_comment" class="col-md-2 col-form-label">Comment <span class="text-danger">*</span></label>
+							<div class="col-md-10">
+								{{ form.comment }}
+								{% if form.comment.errors %}
+									<div class="text-danger">
+										{% for error in form.comment.errors %}
+											<p>{{ error }}</p>
+										{% endfor %}
+									</div>
+								{% endif %}
+							</div>
+						</div>
+
+						<div class="form-group row">
+							<div class="col-md-10 offset-md-2 mt-2">
+								{{ form.captcha }}
+								{% if form.captcha.errors %}
+									<div class="text-danger">
+										{% for error in form.captcha.errors %}
+											<p>{{ error }}</p>
+										{% endfor %}
+									</div>
+								{% endif %}
+							</div>
+						</div>
+
+						<div class="form-group row">
+							<div class="col-md-10 offset-md-2 mt-2">
+								<button type="submit" class="btn btn-primary">Submit Comment</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>				
+			<!-- Previous Comments -->
+			<div class="card my-4">
+				<h6 class="card-header">Comments</h6>
+				<div class="card-body">
+					{% for comment in comments %}
+						<blockquote class="blockquote mb-4">
+							<p class="mb-3">{{ comment.comment }}</p>
+							<footer class="blockquote-footer text-muted">
+								<strong>{{ comment.name }}</strong> <span class="text-muted">commented on</span> <cite title="Source Title">{{ comment.created_at|date:"Y-m-d" }} at {{ comment.created_at|date:"H:i" }}</cite>
+							</footer>
+						</blockquote>
+						<hr />
+					{% endfor %}
+				</div>
+			</div>			
+		</div>
+		<!-- Related News -->
+		<div class="col-md-4">
+			<div class="col-md-12 mb-3">
+				<div class="card bg-dark text-light h-100 shadow-lg" id="radio-player-card">
+					<div class="card-body d-flex flex-column flex-md-row align-items-center">
+						<!-- Album Art -->
+						<div class="mb-3 mb-md-0 me-md-3" style="max-width: 200px; width: 100%;">
+							<img id="album-art" src="/media/logos/logo_color.png" alt="Album Art" class="img-fluid rounded-3 shadow-sm">
+						</div>
+						<!-- Player Info -->
+						<div class="flex-grow-1 text-center text-md-start">
+							<h5 class="fw-bold mb-1" id="song-title">Loading...</h5>
+							<p class="text-muted mb-3" id="artist-name">Loading...</p>
+							<div class="d-flex align-items-center justify-content-center justify-content-md-start mb-3">
+								<img id="presenter-art" src="/media/logos/logo_color.png" alt="Presenter Art" class="rounded-3 me-2 shadow-sm" style="width: 50px; height: 50px; object-fit: cover;">
+								<div>
+									<p class="fw-bold mb-0" id="presenter-name">Loading...</p>
+								</div>
+							</div>
+							<button id="radio-redirect" class="btn btn-outline-light btn-sm px-4">
+								<i class="fas fa-play"></i> Moinesti FM
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<h3 class="mb-3 border-bottom pb-1">Related</h3>
+            {% for news in related_news %}
+			<div class="card mb-3 shadow">
+			    <img src="/media/{{news.image}}" class="card-img-top img-fluid" alt="{{news.title}}">
+			  <div class="card-body">
+			    <h5 class="card-title">{{news.title}}</h5>
+			    <hr/> 
+				<p class="card-text text-truncate">{{news.description}}</p>
+				<p>{{news.add_time}}</p>
+			    <p class="card-text"><a href="/article/{{news.id}}" class="btn btn-sm btn-primary">Read</a></p>
+			  </div>
+			</div>
+		{% endfor %}
+		</div>
+	</div>
+</main>
+{% endblock%}

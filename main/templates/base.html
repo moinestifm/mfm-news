@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" id="theme" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Moinesti FM{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static '/vendor/bs4/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static '/vendor/fontawesome/css/all.min.css' %}">
+    <script type="text/javascript" src="{% static '/vendor/jquery.min.js' %}" defer></script>
+    <script type="text/javascript" src="{% static '/vendor/bs4/bootstrap.min.js' %}" defer></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-dark shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="/media/logos/icon512_rounded.png" alt="Moinesti FM Logo" width="50">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'all-news' %}">All News</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'all-category' %}">All Categories</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <hr class="my-4 text-light">
+
+    <footer>
+        <div class="container d-flex justify-content-between align-items-center">
+            <p class="mb-0">&copy; Moinesti FM <script>document.write(new Date().getFullYear())</script></p>
+            <a href="#" class="text-light text-decoration-none">Back to top <i class="fas fa-arrow-up"></i></a>
+        </div>
+    </footer>
+
+    <script>
+        const songTitle = document.getElementById("song-title");
+        const artistName = document.getElementById("artist-name");
+        const presenterName = document.getElementById("presenter-name");
+        const albumArt = document.getElementById("album-art");
+        const presenterArt = document.getElementById("presenter-art");
+
+        async function fetchNowPlaying() {
+            try {
+                const response = await fetch("https://moinestifm.ro/api/current/");
+                const data = await response.json();
+                const nowPlaying = data.now_playing;
+
+                document.getElementById('album-art').src = nowPlaying.art || "/media/logos/logo_color.png";
+                document.getElementById('song-title').textContent = nowPlaying.title || "Unknown Song";
+                document.getElementById('artist-name').textContent = nowPlaying.artist || "Unknown Artist";
+                document.getElementById('presenter-name').textContent = data.presenter?.presenter || "Unknown Presenter";
+                document.getElementById('presenter-art').src = data.presenter?.presenter_art || "/media/logos/logo_color.png";
+
+            } catch (error) {
+                console.error("Error fetching now playing data:", error);
+            }
+        }
+
+        fetchNowPlaying();
+        setInterval(fetchNowPlaying, 30000);
+
+        document.getElementById('radio-redirect').addEventListener('click', () => {
+            window.open('https://moinestifm.ro', '_blank', 'width=400,height=600,scrollbars=no,toolbar=no,location=no,menubar=no,status=no,resizable=no');
+        });
+    </script>
+</body>
+</html>
