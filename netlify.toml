@@ -1,2 +1,2 @@
  [build] 
- command = "python manage.py collectstatic --noinput" publish = "media"
+ command = "python manage.py collectstatic --noinput"
