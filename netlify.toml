@@ -1,6 +1,6 @@
 [build]
 command = "python manage.py migrate"
-publish = "static"
+publish = "."
 
 [functions]
 directory = "netlify/functions"
